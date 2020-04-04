@@ -8,10 +8,19 @@ namespace PickleAndHope.DataAccess
 {
     public class PickleRepository
     {
-        static List<Pickle> _pickles = new List<Pickle> {new Pickle {Type = "Bread and Butter", NumberInStock = 5}};
+        static List<Pickle> _pickles = new List<Pickle>
+        {
+            new Pickle
+            {
+                Type = "Bread and Butter",
+                NumberInStock = 5,
+                Id = 1
+            }
+        };
 
         public void Add(Pickle pickle)
         {
+            pickle.Id = _pickles.Max(x => x.Id) + 1;
             _pickles.Add(pickle);
         }
 
@@ -36,7 +45,12 @@ namespace PickleAndHope.DataAccess
 
         public List<Pickle> GetAll()
         {
-            throw new NotImplementedException();
+            return _pickles;
+        }
+
+        public Pickle GetById(int id)
+        {
+            return _pickles.FirstOrDefault(pickle => pickle.Id == id);
         }
     }
 }
