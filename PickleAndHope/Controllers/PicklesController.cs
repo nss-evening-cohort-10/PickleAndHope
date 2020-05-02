@@ -54,5 +54,16 @@ namespace PickleAndHope.Controllers
             return Ok(pickle);
         }
 
+        // api/pickles/type/dill
+        [HttpGet("/type/{type}")]
+        public IActionResult GetPickleByType(string type)
+        {
+            var pickle = _repository.GetByType(type);
+
+            if (pickle == null) return NotFound("No pickle with that type exists");
+
+            return Ok(pickle);
+        }
+
     }
 }
