@@ -61,11 +61,39 @@ namespace PickleAndHope.DataAccess
 
         public Pickle Update(Pickle pickle)
         {
-            var pickleToupdate = GetByType(pickle.Type);
+            //var pickleToupdate = GetByType(pickle.Type);
 
-            pickleToupdate.NumberInStock += pickle.NumberInStock;
+            //pickleToupdate.NumberInStock += pickle.NumberInStock;
 
-            return pickleToupdate;
+            //return pickleToupdate;
+
+            var sql = @"update Pickle
+                        set NumberInStock = NumberInStock + @NewStock
+                        output inserted.*
+                        where Id = @Id";
+
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = sql;
+
+                cmd.Parameters.AddWithValue("NewStock", pickle.NumberInStock);
+                cmd.Parameters.AddWithValue("Id", pickle.Id);
+                
+                var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    var updatedPickle = MapReaderToPickle(reader);
+
+                    return updatedPickle;
+                }
+
+                return null;
+            }
+
+
         }
 
         public Pickle GetByType(string typeOfPickle)
