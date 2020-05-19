@@ -5,12 +5,19 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using PickleAndHope.Models;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace PickleAndHope.DataAccess
 {
     public class PickleRepository
     {
-        const string ConnectionString = "Server=localhost;Database=PickleAndHope;Trusted_Connection=True;";
+        string ConnectionString;
+
+        public PickleRepository(IConfiguration config)
+        {
+            ConnectionString = config.GetConnectionString("PickleAndHope");
+            //ConnectionString = config.GetSection("ConnectionStrings")["PickleAndHope"];
+        }
 
         public Pickle Add(Pickle pickle)
         {
@@ -81,8 +88,7 @@ namespace PickleAndHope.DataAccess
         {
             var query = @"select *
                           from Pickle
-                          where id = @id
-                                numberinstock = @numberInStock";
+                          where id = @id";
 
             using (var db = new SqlConnection(ConnectionString))
             {
