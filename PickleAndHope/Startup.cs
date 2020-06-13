@@ -28,6 +28,11 @@ namespace PickleAndHope
         {
             services.AddControllers();
 
+            services.AddCors(options =>
+                options.AddPolicy("ItsAllGood",
+                    builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
+            );
+
             services.AddTransient<PickleRepository>();
             //services.AddScoped<>();
             services.AddSingleton<IConfiguration>(Configuration);
@@ -41,9 +46,12 @@ namespace PickleAndHope
                 app.UseDeveloperExceptionPage();
             }
 
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("ItsAllGood");
 
             app.UseAuthorization();
 
