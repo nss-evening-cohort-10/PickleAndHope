@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PickleAndHope.DataAccess;
@@ -12,6 +14,7 @@ namespace PickleAndHope.Controllers
 {
     [Route("api/pickles")]
     [ApiController]
+    [Authorize]
     public class PicklesController : ControllerBase
     {
         PickleRepository _repository;
@@ -62,6 +65,7 @@ namespace PickleAndHope.Controllers
 
         // api/pickles/type/dill
         [HttpGet("type/{type}")]
+        [AllowAnonymous]
         public IActionResult GetPickleByType(string type)
         {
             var pickle = _repository.GetByType(type);
