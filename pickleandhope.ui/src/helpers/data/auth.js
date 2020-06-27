@@ -22,15 +22,14 @@ const registerUser = (user) => {
   //sub out whatever auth method firebase provides that you want to use.
   return firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then(cred => {
     
-    //get email from firebase
-    let userInfo = {email: cred.user.email};
+    user.firebaseUid = cred.credential.firebaseUid;
 
     //get token from firebase
     cred.user.getIdToken()
       //save the token to the session storage
       .then(token => sessionStorage.setItem('token',token))
       //save the user to the the api
-      .then(() => axios.post(`${baseUrl}/users`,userInfo));
+      .then(() => axios.post(`${baseUrl}/user/register`,user));
   });
 };
 
@@ -45,6 +44,7 @@ const loginUser = (user) => {
 };
 
 const logoutUser = () => {
+  sessionStorage.removeItem("token");
   return firebase.auth().signOut();
 };
 
