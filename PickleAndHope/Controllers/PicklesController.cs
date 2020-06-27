@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using PickleAndHope.DataAccess;
 using PickleAndHope.Models;
 
-namespace PickleAndHope.Controllers
+namespace PickleAndHope.Controllersd
 {
     [Route("api/pickles")]
     [ApiController]
@@ -29,6 +29,7 @@ namespace PickleAndHope.Controllers
         [HttpPost]
         public IActionResult AddPickle(Pickle pickleToAdd)
         {
+
             var existingPickle = _repository.GetByType(pickleToAdd.Type);
             if (existingPickle == null)
             {
