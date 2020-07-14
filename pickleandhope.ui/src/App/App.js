@@ -31,6 +31,9 @@ fbConnection();
 // }
 
 function App() {
+
+  const state = {file:{}};
+
   return (
     <div className="App">
       <button className="btn btn-danger">Bootstrap Button</button>

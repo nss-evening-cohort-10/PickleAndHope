@@ -54,6 +54,7 @@ namespace PickleAndHope
                 );
 
             services.AddTransient<PickleRepository>();
+            services.AddTransient<FileRepository>();
             //services.AddScoped<>();
             services.AddSingleton<IConfiguration>(Configuration);
         }
