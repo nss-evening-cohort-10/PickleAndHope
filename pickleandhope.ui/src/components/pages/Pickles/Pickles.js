@@ -3,6 +3,7 @@ import SinglePickle from "../../shared/SinglePickle/SinglePickle";
 import {getPickles} from "../../../helpers/data/pickleData";
 import FileUpload from '../../shared/FileUpload/FileUpload';
 import {uploadFile} from '../../../helpers/data/fileUpload';
+import {baseUrl} from "../../../apikeys.json";
 
 
 class Pickles extends Component {
@@ -32,13 +33,19 @@ class Pickles extends Component {
             const {file} = this.state; 
     
             uploadFile(file);
-        }    
+        }
 
         return (
             <div>
                 <FileUpload onChange={(file) => this.setState({file:file})}/>
-                <button onClick={uploadOnClick} value="click me"/>
+                <button onClick={uploadOnClick} >Click Me</button>
                 {generatePickles()}
+
+                <img src={`${baseUrl}/api/images/2`}/>
+                <img src={`${baseUrl}/api/images/3`}/>
+                <img src={`${baseUrl}/api/images/4`}/>
+                <img src={`${baseUrl}/api/images/5`}/>
+
             </div>)
     }
 

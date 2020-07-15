@@ -30,5 +30,14 @@ namespace PickleAndHope.Controllers
 
             return Ok();
         }
+
+        //api/images/123
+        [HttpGet("{id}")]
+        public IActionResult GetFile(int id)
+        {
+            var uploadedFile = _repo.GetById(id);
+
+            return File(uploadedFile.FileContent, uploadedFile.FileContentType);
+        }
     }
 }

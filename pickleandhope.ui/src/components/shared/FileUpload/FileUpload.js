@@ -11,7 +11,7 @@ class FileUpload extends Component {
         return (
             <div>
                 <label for="file">File To Upload</label>
-                <input name="file" type="file" accept=".wav,.txt" onChange={this.fileChanged}/>
+                <input name="file" type="file" accept=".jpg,.png,.gif" onChange={this.fileChanged}/>
             </div>
         );
 

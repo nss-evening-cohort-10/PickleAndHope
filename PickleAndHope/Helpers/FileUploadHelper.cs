@@ -15,41 +15,47 @@ namespace PickleAndHope.Helpers
         
         public UploadedFile GetFileUploadContent(string contentType, Stream requestBody)
         {
-            var boundary = GetBoundary(MediaTypeHeaderValue.Parse(contentType), DefaultFormOptions.MultipartBoundaryLengthLimit);
+            return InternalGetFileUploadContent(contentType, requestBody).Result;
+        }
+
+        static async Task<UploadedFile> InternalGetFileUploadContent(string contentType, Stream requestBody)
+        {
+            var boundary = GetBoundary(MediaTypeHeaderValue.Parse(contentType),
+                DefaultFormOptions.MultipartBoundaryLengthLimit);
 
             var reader = new MultipartReader(boundary, requestBody);
 
-            var section = reader.ReadNextSectionAsync().Result;
-            
+            var section = await reader.ReadNextSectionAsync();
+
             while (section != null)
             {
-                var hasContentDispositionHeader = ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
+                var hasContentDispositionHeader =
+                    ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
 
                 if (hasContentDispositionHeader)
                 {
                     if (HasFileContentDisposition(contentDisposition))
                     {
-                        using (var targetStream = new MemoryStream())
+                        using var targetStream = new MemoryStream();
+                        await section.Body.CopyToAsync(targetStream);
+
+                        return new UploadedFile
                         {
-                            section.Body.CopyTo(targetStream);
-                            
-                            return new UploadedFile
-                            {
-                                Content = targetStream.ToArray(),
-                                ContentType = section.ContentType,
-                                Size = targetStream.Length,
-                                Filename = contentDisposition.FileName.Value
-                            };
-                        }
+                            FileContent = targetStream.ToArray(),
+                            FileContentType = section.ContentType,
+                            FileLength = targetStream.Length,
+                            FileName = contentDisposition.FileName.Value
+                        };
                     }
                 }
-                section = reader.ReadNextSectionAsync().Result;
+
+                section = await reader.ReadNextSectionAsync();
             }
 
             throw new Exception("something went wrong during file upload.");
         }
-        
-        
+
+
         // Content-Type: multipart/form-data; boundary="----WebKitFormBoundarymx2fSWqWSd0OxQqq"
         // The spec says 70 characters is a reasonable limit.
         static string GetBoundary(MediaTypeHeaderValue contentType, int lengthLimit)
@@ -87,15 +93,14 @@ namespace PickleAndHope.Helpers
         }
     }
 
-
     public class UploadedFile
     {
-        public byte[] Content { get; set; }
+        public byte[] FileContent { get; set; }
         
-        public long Size { get; set; }
+        public long FileLength { get; set; }
         
-        public string ContentType { get; set; }
+        public string FileContentType { get; set; }
         
-        public string Filename { get; set; }
+        public string FileName { get; set; }
     }
 }
